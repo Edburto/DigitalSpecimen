@@ -1,5 +1,18 @@
 'use client';
 
+/**
+ * Section 2 — Soil Cutaway & Neuronal Root Network
+ * Built against: DigitalSpecimen_DesignTokens.md (locked 23 Aug 2026)
+ *   obsidian #030302 / bone #f6f5f2 background pair
+ *   off-white #d6be96 (organic) -> cyan #5eead4 (engineered) accent shift
+ *   bronze #c9a878 mono labels
+ *   Instrument Serif (display) / JetBrains Mono (labels) / Archivo (body)
+ *
+ * Requires Instrument Serif + JetBrains Mono + Archivo loaded at the app
+ * level (see token doc, section 2, for the Google Fonts <link>).
+ * Ready to hand to Claude Design as-is — no placeholder tokens remain.
+ */
+
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 
@@ -96,7 +109,10 @@ export default function Section2SoilCutaway() {
           <p className="text-xs font-mono tracking-[0.3em] text-[#c9a878] mb-2">
             FIG. 01 — SUBSTRATUM CROSS-SECTION
           </p>
-          <h2 className="text-3xl md:text-5xl font-normal font-garamond tracking-tight">
+          <h2
+            className="text-3xl md:text-5xl font-normal tracking-tight"
+            style={{ fontFamily: "'Instrument Serif', serif" }}
+          >
             Everything begins below the surface.
           </h2>
         </motion.div>
@@ -108,7 +124,7 @@ export default function Section2SoilCutaway() {
             <motion.path
               d="M 500 0 Q 480 300 500 1000"
               fill="none"
-              stroke="rgb(214,190,150)"
+              stroke="#d6be96"
               strokeWidth="1.6"
               style={{ pathLength: rootDraw }}
             />
@@ -147,7 +163,10 @@ export default function Section2SoilCutaway() {
             <p className="text-xs font-mono tracking-[0.3em] text-[#5eead4] mb-2">
               FIG. 02 — VEIN STRUCTURE, MAGNIFIED
             </p>
-            <h3 className="text-2xl md:text-4xl font-normal font-garamond tracking-tight">
+            <h3
+              className="text-2xl md:text-4xl font-normal tracking-tight"
+              style={{ fontFamily: "'Instrument Serif', serif" }}
+            >
               What looks alive was engineered.
             </h3>
           </div>
@@ -166,7 +185,10 @@ export default function Section2SoilCutaway() {
             <p className="text-xs font-mono tracking-[0.3em] text-[#c9a878] mb-3 text-center">
               PLATE VII — MANIFESTO
             </p>
-            <h3 className="text-2xl md:text-3xl font-normal font-garamond tracking-tight text-center mb-4">
+            <h3
+              className="text-2xl md:text-3xl font-normal tracking-tight text-center mb-4"
+              style={{ fontFamily: "'Instrument Serif', serif" }}
+            >
               Every system, examined.
             </h3>
             <p className="text-sm md:text-base leading-relaxed text-white/70 text-center font-sans">
