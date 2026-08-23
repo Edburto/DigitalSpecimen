@@ -17,7 +17,7 @@
  *     now lives entirely in the root gradient, so a separate grid layer
  *     was redundant.
  *   - Layer 4 wing icon (small centered SVG) replaced with a full-bleed
- *     photo (/assets/butterfly-wing.jpg), colour-locked to the same
+ *     photo (/assets/butterfly_wing.jpg), colour-locked to the same
  *     terminal cyan as the roots so the retraction->fade-in reads as one
  *     continuous transformation rather than a cut. A scrim was added
  *     behind the FIG. 02 text since it now sits over a dense photo
@@ -38,7 +38,7 @@
  *     (2204x1740) before shipping. Filename kept as .png to match the
  *     actual file type; earlier revision had a .jpg/.png mismatch bug
  *     (background never loaded) — confirm this is fixed in the repo.
- *   - /assets/butterfly-wing.jpg — new asset, 5504x3072, colour-locked
+ *   - /assets/butterfly_wing.jpg — new asset, 5504x3072, colour-locked
  *     to #5eead4-range cyan. Add to public/assets/ before deploying.
  *
  * Requires Instrument Serif + JetBrains Mono + Archivo loaded locally
@@ -253,7 +253,7 @@ export default function Section2SoilCutaway() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: 'url("/assets/butterfly-wing.jpg")',
+              backgroundImage: 'url("/assets/butterfly_wing.jpg")',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
