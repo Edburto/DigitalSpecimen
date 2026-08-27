@@ -159,13 +159,9 @@ export default function Section2SoilCutaway() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-[#030302] text-[#f6f5f2] overflow-hidden font-sans"
-      style={{ height: '300vh' }}
+      className="relative w-full h-[300svh] bg-[#030302] text-[#f6f5f2] overflow-hidden font-sans"
     >
-      <div
-        className="sticky top-0 w-full overflow-hidden flex flex-col justify-between p-6 md:p-12"
-        style={{ height: '100vh' }}
-      >
+      <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col justify-between p-6 md:p-12">
         {/* Fixed Chrome Header Labels */}
         <div className="absolute top-8 left-8 right-8 z-30 flex justify-between items-center text-[10px] uppercase font-mono tracking-[0.28em] text-white/70">
           <span>DEPTH // SUBSTRATUM</span>
@@ -265,7 +261,7 @@ export default function Section2SoilCutaway() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: 'url("/assets/butterfly_wing.jpg")',
+              backgroundImage: 'url("/assets/butterfly-wing.jpg")',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
