@@ -49,49 +49,53 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 
 // --- Root path data -------------------------------------------------
-// viewBox 0 0 1000 1000. Six roots across the width, each with two
-// small branch offshoots in the lower third for a naturalistic look.
+// viewBox 0 0 1600 900, matched to real widescreen proportions (not a
+// square) so the roots spread across the full width instead of being
+// letterboxed into a small centered block. Curvature amplitude is much
+// larger than the original draft so each root reads as organic at
+// full size, not as a near-straight line. Each root's shape direction
+// (left-first vs right-first wobble) alternates for visual rhythm.
 const ROOTS = [
   {
-    main: 'M120 0 C110 150 135 300 120 450 C100 600 130 750 115 980',
+    main: 'M150 0 C190 120 90 240 150 380 C210 520 80 650 130 880',
     branches: [
-      'M120 500 C90 620 70 720 60 850',
-      'M120 650 C150 760 170 860 185 980',
+      'M150 350 C60 480 20 600 -10 760',
+      'M150 500 C220 620 260 720 300 860',
     ],
   },
   {
-    main: 'M280 0 C270 160 300 310 280 460 C260 610 295 760 275 980',
+    main: 'M420 0 C380 130 480 260 420 400 C360 540 470 670 400 880',
     branches: [
-      'M280 520 C250 640 225 740 210 870',
-      'M280 680 C310 780 330 880 340 980',
+      'M420 380 C320 500 280 610 240 760',
+      'M420 550 C500 660 540 760 580 880',
     ],
   },
   {
-    main: 'M450 0 C440 140 470 300 450 440 C430 590 465 740 445 980',
+    main: 'M690 0 C740 130 630 260 690 400 C750 540 640 670 700 880',
     branches: [
-      'M450 480 C420 600 395 700 380 830',
-      'M450 640 C480 750 500 850 510 980',
+      'M690 360 C600 480 560 590 520 740',
+      'M690 540 C770 650 810 750 850 880',
     ],
   },
   {
-    main: 'M580 0 C570 150 605 310 580 460 C555 610 590 760 570 980',
+    main: 'M910 0 C870 120 960 250 910 390 C860 530 950 660 900 880',
     branches: [
-      'M580 510 C550 630 525 730 505 860',
-      'M580 670 C610 770 635 870 650 980',
+      'M910 400 C820 510 780 620 740 770',
+      'M910 560 C990 660 1030 760 1070 880',
     ],
   },
   {
-    main: 'M730 0 C720 160 755 300 730 450 C705 600 740 750 720 980',
+    main: 'M1180 0 C1230 130 1120 260 1180 400 C1240 540 1130 670 1190 880',
     branches: [
-      'M730 490 C700 610 675 710 655 840',
-      'M730 650 C765 760 785 860 800 980',
+      'M1180 380 C1090 490 1050 600 1010 750',
+      'M1180 550 C1260 650 1300 750 1340 880',
     ],
   },
   {
-    main: 'M880 0 C870 140 900 300 880 440 C860 590 895 740 875 980',
+    main: 'M1450 0 C1410 120 1490 250 1450 390 C1410 530 1490 660 1450 880',
     branches: [
-      'M880 530 C850 650 825 750 810 880',
-      'M880 690 C915 790 935 890 950 980',
+      'M1450 400 C1370 510 1330 610 1290 760',
+      'M1450 560 C1520 660 1550 760 1580 870',
     ],
   },
 ];
@@ -201,7 +205,11 @@ export default function Section2SoilCutaway() {
           className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
           style={{ opacity: rootsGroupOpacity }}
         >
-          <svg className="w-full h-full max-w-5xl" viewBox="0 0 1000 1000">
+          <svg
+            className="absolute inset-0 w-full h-full"
+            viewBox="0 0 1600 900"
+            preserveAspectRatio="xMidYMid slice"
+          >
             <defs>
               <linearGradient id="rootGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#d6be96" />
@@ -253,7 +261,7 @@ export default function Section2SoilCutaway() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: 'url("/assets/butterfly_wing.jpg")',
+              backgroundImage: 'url("/assets/butterfly-wing.jpg")',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
