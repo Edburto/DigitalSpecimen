@@ -4,24 +4,25 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 
 /**
- * Section 3 — Manifesto Plate (Curved Carousel v4)
+ * Section 3 — Manifesto Plate (Curved Carousel v5)
  *
- * Navigation: click-drag, mouse-wheel, and arrow buttons all move the strip.
- * Idle autoplay resumes only after a short pause with no interaction.
+ * THE ARC: cards curve along a real cosine arc (y = ARC_HEIGHT * (1 -
+ * cos(norm * PI/2))) instead of a linear ramp — this is what actually reads
+ * as "sitting on a curved track" rather than "cards tilted on a flat row".
+ * ARC_HEIGHT is large enough (72px) that the curve is unmistakable even at
+ * a glance.
  *
- * Focus state: the slot nearest center gets a glowing cyan border, computed
- * every frame from its actual distance-from-center (not a hard on/off toggle
- * — it's a continuous glow strength that peaks exactly at center).
+ * THE LABEL PLATE: taller (covers ~58% of card height, not a thin strip)
+ * and every type size bumped up a full step so body copy is comfortably
+ * readable at rest, not just at full zoom.
  *
- * Curve: cards curve away in both rotation (rotateY) AND vertical position
- * (translateY) as they move from center — a true arc, not just a flat row
- * with rotated cards.
- *
- * Category pills below the carousel jump the strip to a given pod (shortest
- * path around the loop) and stay highlighted whenever that pod is centered.
- *
- * All motion is imperative (refs + rAF, not React state per frame) —
- * `will-change: transform` is set on every card for GPU acceleration.
+ * CLICK-TO-ZOOM: clicking any card (a real click, not a drag) centers it
+ * via the shortest path AND marks it "selected" — while selected, that
+ * card gets an extra scale boost when centered and autoplay stays paused
+ * indefinitely (not just the normal 1.4s idle window). Clicking empty
+ * space, or clicking the same card again, releases the zoom and autoplay
+ * resumes normally. Category pills use the same selection path, so picking
+ * a pill also zooms and locks.
  */
 
 const UNIQUE_PODS = [
@@ -73,51 +74,58 @@ const UNIQUE_PODS = [
 
 const N_UNIQUE = UNIQUE_PODS.length;
 const REPEAT = 3;
-const VIRTUAL = N_UNIQUE * REPEAT; // 12 slots on the loop
+const VIRTUAL = N_UNIQUE * REPEAT;
 const HALF = VIRTUAL / 2;
 
 const SLOTS = Array.from({ length: VIRTUAL }, (_, i) => UNIQUE_PODS[i % N_UNIQUE]);
 
-const SPACING_PX = 230;
+const SPACING_PX = 240;
 const VISIBLE_RANGE = 4.2;
+const ARC_HEIGHT = 72; // px — how pronounced the curve is at the extremes
 const AUTOPLAY_STEP = 0.003;
-const IDLE_MS = 1400; // how long after interaction before autoplay resumes
+const IDLE_MS = 1400;
 const EASE = 0.09;
 const DRAG_SENSITIVITY = 1 / SPACING_PX;
 const WHEEL_SENSITIVITY = 1 / 320;
+const CLICK_MOVE_THRESHOLD = 6; // px — below this, a pointerdown+up is a click, not a drag
 
 function wrapDelta(delta) {
   return (((delta + HALF) % VIRTUAL) + VIRTUAL) % VIRTUAL - HALF;
 }
 
-function applyCardStyle(cardEl, glowEl, diff) {
+function applyCardStyle(cardEl, glowEl, diff, isSelectedSlot) {
   const norm = diff / VISIBLE_RANGE;
   const clampedNorm = Math.max(-1.7, Math.min(1.7, norm));
   const absNorm = Math.min(1, Math.abs(clampedNorm));
 
   const x = diff * SPACING_PX;
-  const y = absNorm * 30; // vertical arc — sides sit lower, like a curved track
-  const rotateY = Math.max(-58, Math.min(58, clampedNorm * -46));
-  const scale = Math.max(0.5, 1 - absNorm * 0.42);
+  // True cosine arc — accelerating curve, not a linear ramp
+  const y = ARC_HEIGHT * (1 - Math.cos(absNorm * (Math.PI / 2)));
+  const rotateY = Math.max(-52, Math.min(52, clampedNorm * -42));
+
+  const isCentered = Math.abs(diff) < 0.5;
+  const zoomBoost = isSelectedSlot && isCentered ? 1 + (1 - Math.abs(diff) / 0.5) * 0.16 : 1;
+
+  const scale = Math.max(0.5, 1 - absNorm * 0.42) * zoomBoost;
   const opacity = Math.max(0.15, 1 - Math.abs(clampedNorm) * 0.72);
   const blur = Math.min(2.5, Math.abs(clampedNorm) * 2.2);
   const brightness = Math.max(0.55, 1 - Math.abs(clampedNorm) * 0.4);
-  const z = Math.round(1000 - Math.abs(diff) * 40);
+  const z = Math.round(1000 - Math.abs(diff) * 40 + (isSelectedSlot ? 500 : 0));
 
   cardEl.style.transform = `translate(-50%, -50%) translateX(${x}px) translateY(${y}px) rotateY(${rotateY}deg) scale(${scale})`;
   cardEl.style.opacity = String(opacity);
   cardEl.style.filter = `blur(${blur}px) brightness(${brightness})`;
   cardEl.style.zIndex = String(z);
 
-  // Continuous glow strength peaking exactly at center, gone by diff=0.9
   const glowStrength = Math.max(0, 1 - Math.abs(diff) / 0.9);
   if (glowEl) {
     if (glowStrength > 0.01) {
+      const extra = isSelectedSlot ? 0.25 : 0;
       glowEl.style.boxShadow = `0 34px 64px -18px rgba(26,26,24,0.4), 0 0 0 ${
         1.5 + glowStrength * 1.5
-      }px rgba(94,234,212,${0.25 + glowStrength * 0.55}), 0 0 ${
-        20 + glowStrength * 40
-      }px rgba(94,234,212,${glowStrength * 0.55})`;
+      }px rgba(94,234,212,${0.25 + glowStrength * (0.55 + extra)}), 0 0 ${
+        20 + glowStrength * 46
+      }px rgba(94,234,212,${glowStrength * (0.55 + extra)})`;
     } else {
       glowEl.style.boxShadow = '0 34px 64px -18px rgba(26,26,24,0.4)';
     }
@@ -132,13 +140,17 @@ export default function Section3Manifesto() {
   const targetRef = useRef(0);
   const isDraggingRef = useRef(false);
   const dragStartXRef = useRef(0);
+  const dragStartYRef = useRef(0);
   const dragStartPosRef = useRef(0);
+  const dragMovedRef = useRef(0);
   const lastInteractionRef = useRef(0);
   const rafRef = useRef(null);
   const activeUniqueRef = useRef(-1);
+  const selectedUniqueRef = useRef(-1);
 
   const [reducedMotion, setReducedMotion] = useState(false);
   const [activeCategory, setActiveCategory] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState(-1);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -149,16 +161,17 @@ export default function Section3Manifesto() {
     if (reducedMotion) {
       cardRefs.current.forEach((el, i) => {
         if (!el) return;
-        applyCardStyle(el, glowRefs.current[i], wrapDelta(i));
+        applyCardStyle(el, glowRefs.current[i], wrapDelta(i), false);
       });
       return;
     }
 
     function frame() {
-      const idle = !isDraggingRef.current && Date.now() - lastInteractionRef.current > IDLE_MS;
-      if (idle) {
-        targetRef.current += AUTOPLAY_STEP;
-      }
+      const idle =
+        !isDraggingRef.current &&
+        selectedUniqueRef.current === -1 &&
+        Date.now() - lastInteractionRef.current > IDLE_MS;
+      if (idle) targetRef.current += AUTOPLAY_STEP;
 
       const delta = wrapDelta(targetRef.current - posRef.current);
       posRef.current += delta * EASE;
@@ -170,10 +183,11 @@ export default function Section3Manifesto() {
       cardRefs.current.forEach((el, i) => {
         if (!el) return;
         const diff = wrapDelta(i - posRef.current);
-        applyCardStyle(el, glowRefs.current[i], diff);
+        const uniqueIdx = i % N_UNIQUE;
+        applyCardStyle(el, glowRefs.current[i], diff, uniqueIdx === selectedUniqueRef.current);
         if (Math.abs(diff) < nearestAbs) {
           nearestAbs = Math.abs(diff);
-          nearestUnique = i % N_UNIQUE;
+          nearestUnique = uniqueIdx;
         }
       });
 
@@ -195,10 +209,37 @@ export default function Section3Manifesto() {
     lastInteractionRef.current = Date.now();
   }, []);
 
+  function selectPod(uniqueIndex) {
+    if (selectedUniqueRef.current === uniqueIndex) {
+      // clicking the already-selected (centered) pod again releases the zoom
+      selectedUniqueRef.current = -1;
+      setSelectedCategory(-1);
+    } else {
+      selectedUniqueRef.current = uniqueIndex;
+      setSelectedCategory(uniqueIndex);
+      let best = null;
+      for (let rep = 0; rep < REPEAT; rep++) {
+        const slot = uniqueIndex + rep * N_UNIQUE;
+        const d = wrapDelta(slot - posRef.current);
+        if (best === null || Math.abs(d) < Math.abs(best)) best = d;
+      }
+      targetRef.current = posRef.current + best;
+    }
+    markInteraction();
+  }
+
+  function deselect() {
+    selectedUniqueRef.current = -1;
+    setSelectedCategory(-1);
+    markInteraction();
+  }
+
   function handlePointerDown(e) {
     isDraggingRef.current = true;
     dragStartXRef.current = e.clientX;
+    dragStartYRef.current = e.clientY;
     dragStartPosRef.current = posRef.current;
+    dragMovedRef.current = 0;
     markInteraction();
     stageRef.current?.setPointerCapture?.(e.pointerId);
   }
@@ -206,14 +247,25 @@ export default function Section3Manifesto() {
   function handlePointerMove(e) {
     if (!isDraggingRef.current) return;
     const deltaX = e.clientX - dragStartXRef.current;
+    const deltaY = e.clientY - dragStartYRef.current;
+    dragMovedRef.current = Math.max(dragMovedRef.current, Math.hypot(deltaX, deltaY));
     const newPos = dragStartPosRef.current - deltaX * DRAG_SENSITIVITY;
     posRef.current = ((newPos % VIRTUAL) + VIRTUAL) % VIRTUAL;
     targetRef.current = posRef.current;
     markInteraction();
   }
 
-  function handlePointerUp() {
+  function handlePointerUp(e) {
     isDraggingRef.current = false;
+    if (dragMovedRef.current < CLICK_MOVE_THRESHOLD) {
+      const target = e.target.closest('[data-slot-index]');
+      if (target) {
+        const slotIndex = Number(target.dataset.slotIndex);
+        selectPod(slotIndex % N_UNIQUE);
+      } else {
+        deselect();
+      }
+    }
     markInteraction();
   }
 
@@ -221,35 +273,23 @@ export default function Section3Manifesto() {
     e.preventDefault();
     const delta = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * WHEEL_SENSITIVITY;
     targetRef.current += delta;
+    if (selectedUniqueRef.current !== -1) deselect();
     markInteraction();
   }
 
   function step(dir) {
     targetRef.current += dir;
-    markInteraction();
-  }
-
-  function goToCategory(uniqueIndex) {
-    // shortest-path jump to the nearest occurrence of this pod on the loop
-    let best = null;
-    for (let rep = 0; rep < REPEAT; rep++) {
-      const slot = uniqueIndex + rep * N_UNIQUE;
-      const d = wrapDelta(slot - posRef.current);
-      if (best === null || Math.abs(d) < Math.abs(best)) best = d;
-    }
-    targetRef.current = posRef.current + best;
+    if (selectedUniqueRef.current !== -1) deselect();
     markInteraction();
   }
 
   return (
     <section className="relative w-full bg-[#f6f5f2] text-[#1a1a18] font-sans overflow-hidden px-6 md:px-12 pt-0 pb-32 md:pb-40">
-      {/* Dark-to-light transition bridge from Section 2's #030302 */}
       <div
         className="absolute top-0 left-0 right-0 h-[140px] md:h-[200px] pointer-events-none z-20"
         style={{ background: 'linear-gradient(180deg, #030302 0%, #f6f5f2 100%)' }}
       />
 
-      {/* Printed hairline grid underlay */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -293,7 +333,6 @@ export default function Section3Manifesto() {
         </motion.p>
       </div>
 
-      {/* The Carousel Stage */}
       <div className="relative">
         <div
           ref={stageRef}
@@ -302,49 +341,55 @@ export default function Section3Manifesto() {
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
           onWheel={handleWheel}
-          className="relative w-full h-[480px] md:h-[580px] my-8 md:my-12 touch-none select-none"
-          style={{ perspective: '1400px', cursor: isDraggingRef.current ? 'grabbing' : 'grab' }}
+          className="relative w-full h-[520px] md:h-[640px] my-8 md:my-12 touch-none select-none"
+          style={{ perspective: '1400px', cursor: 'grab' }}
         >
           <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
             {SLOTS.map((pod, i) => (
               <div
                 key={`${pod.num}-${i}`}
                 ref={(el) => (cardRefs.current[i] = el)}
+                data-slot-index={i}
                 className="absolute top-1/2 left-1/2 will-change-transform"
                 style={{ transformStyle: 'preserve-3d' }}
               >
                 <div
                   ref={(el) => (glowRefs.current[i] = el)}
-                  className="relative w-[250px] md:w-[310px] h-[380px] md:h-[440px] rounded-[32px] overflow-hidden pointer-events-none will-change-transform"
+                  data-slot-index={i}
+                  className="relative w-[270px] md:w-[340px] h-[430px] md:h-[500px] rounded-[32px] overflow-hidden will-change-transform"
                   style={{
                     background: `linear-gradient(160deg, ${pod.accent} 0%, ${pod.accentDark} 100%)`,
                     boxShadow: '0 34px 64px -18px rgba(26,26,24,0.4)',
                   }}
                 >
                   <span
-                    className="absolute -top-3 -left-2 font-garamond select-none"
+                    className="absolute -top-3 -left-2 font-garamond select-none pointer-events-none"
                     style={{ fontSize: '150px', lineHeight: 1, color: 'rgba(255,255,255,0.16)' }}
                   >
                     {pod.num}
                   </span>
 
                   <p
-                    className="absolute top-6 left-6 font-mono text-[9px] uppercase tracking-[0.22em]"
+                    className="absolute top-6 left-6 font-mono text-[10px] uppercase tracking-[0.22em] pointer-events-none"
                     style={{ color: 'rgba(255,255,255,0.75)' }}
                   >
                     {pod.fig}
                   </p>
 
-                  <div className="absolute left-4 right-4 bottom-4 bg-[#fbfaf7] rounded-2xl p-4 md:p-5 shadow-lg">
-                    <h3 className="font-garamond text-lg md:text-xl text-[#1a1a18]">{pod.title}</h3>
-                    <p className="text-[11px] md:text-xs leading-relaxed mt-2 text-[#1a1a18]/70">
+                  {/* Taller label plate — ~58% of card height, bigger type throughout */}
+                  <div
+                    className="absolute left-4 right-4 bottom-4 bg-[#fbfaf7] rounded-2xl p-5 md:p-6 shadow-lg flex flex-col pointer-events-none"
+                    style={{ top: '40%' }}
+                  >
+                    <h3 className="font-garamond text-2xl md:text-3xl text-[#1a1a18]">{pod.title}</h3>
+                    <p className="text-sm md:text-base leading-relaxed mt-3 text-[#1a1a18]/70 flex-1">
                       {pod.body}
                     </p>
-                    <div className="pt-2 mt-2 flex flex-col gap-0.5 border-t border-[#1a1a18]/15">
-                      <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-[#1a1a18]/50">
+                    <div className="pt-3 mt-3 flex flex-col gap-1 border-t border-[#1a1a18]/15">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#1a1a18]/50">
                         {pod.meta1}
                       </p>
-                      <p className="font-mono text-[8px] uppercase tracking-[0.16em] text-[#1a1a18]/50">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#1a1a18]/50">
                         {pod.meta2}
                       </p>
                     </div>
@@ -355,7 +400,6 @@ export default function Section3Manifesto() {
           </div>
         </div>
 
-        {/* Arrow navigation */}
         <button
           type="button"
           aria-label="Previous specimen"
@@ -374,18 +418,18 @@ export default function Section3Manifesto() {
         </button>
       </div>
 
-      {/* Category filter pills */}
       <div className="relative z-10 max-w-6xl mx-auto flex flex-wrap justify-center gap-3 mt-4 md:mt-6">
         {UNIQUE_PODS.map((pod, i) => (
           <button
             key={pod.category}
             type="button"
-            onClick={() => goToCategory(i)}
+            onClick={() => selectPod(i)}
             className="font-mono text-[10px] uppercase tracking-[0.18em] px-4 py-2 rounded-full border transition-colors"
             style={{
               borderColor: i === activeCategory ? pod.accent : 'rgba(26,26,24,0.2)',
               backgroundColor: i === activeCategory ? pod.accent : 'transparent',
               color: i === activeCategory ? '#fbfaf7' : 'rgba(26,26,24,0.6)',
+              boxShadow: i === selectedCategory ? `0 0 0 2px ${pod.accent}` : 'none',
             }}
           >
             {pod.category}
