@@ -140,12 +140,12 @@ export default function Section2SoilCutaway() {
   const wingRise = useTransform(scrollYProgress, [0.3, 0.46], [24, 0]);
 
   // --- Fig. 03 / Plate VII: manifesto plate ---
-  const plateFade = useTransform(scrollYProgress, [0.68, 0.84], [0, 1]);
-  const plateRise = useTransform(scrollYProgress, [0.68, 0.84], [16, 0]);
+  const plateFade = useTransform(scrollYProgress, [0.58, 0.74], [0, 1]);
+  const plateRise = useTransform(scrollYProgress, [0.58, 0.74], [16, 0]);
 
   const phaseLabel = useTransform(
     scrollYProgress,
-    [0, 0.29, 0.3, 0.67, 0.68, 1],
+    [0, 0.29, 0.3, 0.57, 0.58, 1],
     [
       'SYSTEM_01 // ROOT',
       'SYSTEM_01 // ROOT',
@@ -271,7 +271,7 @@ export default function Section2SoilCutaway() {
             className="absolute inset-0"
             style={{
               background:
-                'radial-gradient(ellipse at center, rgba(3,3,2,0.35) 0%, rgba(3,3,2,0.75) 65%, rgba(3,3,2,0.9) 100%)',
+                'radial-gradient(ellipse at center, rgba(3,3,2,0.1) 0%, rgba(3,3,2,0.3) 55%, rgba(3,3,2,0.55) 100%)',
             }}
           />
           <div className="relative h-full flex items-center justify-center px-6">
