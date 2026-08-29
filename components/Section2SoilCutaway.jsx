@@ -256,18 +256,15 @@ export default function Section2SoilCutaway() {
         {/* Layer 4: Fig. 02 — full-bleed wing crossfade, colour-matched to root's terminal cyan */}
         <motion.div
           className="absolute inset-0 z-20 pointer-events-none"
-          style={{ opacity: wingFade }}
+          style={{
+            opacity: wingFade,
+            backgroundImage: 'url("/assets/butterfly-wing.jpg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         >
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: 'url("/assets/butterfly-wing.jpg")',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
           <motion.div
-            className="relative h-full flex items-center justify-center px-6"
+            className="relative w-full h-full flex items-center justify-center px-6"
             style={{ y: prefersReducedMotion ? 0 : wingRise }}
           >
             <div className="max-w-md text-center border border-[#5eead4]/30 bg-[#030302]/70 backdrop-blur-sm px-8 py-8">
