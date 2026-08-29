@@ -256,7 +256,7 @@ export default function Section2SoilCutaway() {
         {/* Layer 4: Fig. 02 — full-bleed wing crossfade, colour-matched to root's terminal cyan */}
         <motion.div
           className="absolute inset-0 z-20 pointer-events-none"
-          style={{ opacity: wingFade, y: prefersReducedMotion ? 0 : wingRise }}
+          style={{ opacity: wingFade }}
         >
           <div
             className="absolute inset-0"
@@ -264,10 +264,12 @@ export default function Section2SoilCutaway() {
               backgroundImage: 'url("/assets/butterfly-wing.jpg")',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'brightness(2.2) contrast(1.05) saturate(1.2)',
             }}
           />
-          <div className="relative h-full flex items-center justify-center px-6">
+          <motion.div
+            className="relative h-full flex items-center justify-center px-6"
+            style={{ y: prefersReducedMotion ? 0 : wingRise }}
+          >
             <div className="max-w-md text-center border border-[#5eead4]/30 bg-[#030302]/70 backdrop-blur-sm px-8 py-8">
               <p className="text-xs font-mono tracking-[0.3em] text-[#5eead4] mb-2">
                 FIG. 02 — VEIN STRUCTURE, MAGNIFIED
@@ -279,7 +281,7 @@ export default function Section2SoilCutaway() {
                 What looks alive was engineered.
               </h3>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Layer 5: Fig. 03 / Plate VII — manifesto plate (unchanged) */}
