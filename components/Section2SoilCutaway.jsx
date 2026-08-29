@@ -264,15 +264,8 @@ export default function Section2SoilCutaway() {
               backgroundImage: 'url("/assets/butterfly-wing.jpg")',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'brightness(1.4) saturate(1.15)',
+              filter: 'brightness(2.2) contrast(1.05) saturate(1.2)',
             }}
-          />
-          {/* Very light overall dim, just enough to settle the busy texture —
-              NOT a legibility mechanism. Text legibility comes from the
-              bordered box below instead, same technique as Plate VII. */}
-          <div
-            className="absolute inset-0"
-            style={{ background: 'rgba(3,3,2,0.15)' }}
           />
           <div className="relative h-full flex items-center justify-center px-6">
             <div className="max-w-md text-center border border-[#5eead4]/30 bg-[#030302]/70 backdrop-blur-sm px-8 py-8">
