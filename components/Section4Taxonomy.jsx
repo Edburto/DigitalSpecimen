@@ -1,33 +1,27 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import SectionBreak from './SectionBreak';
 
 /**
- * Section 4 — System Taxonomy (The Triune Brain)
+ * Section 4 — The Decision Engine
  *
- * Node/connector mechanic adapted from a reference spec (LŪMEN // ÍNDEX):
- * three absolutely-positioned square nodes, each with a label group
- * connected back to it by an elbowed SVG line (one horizontal run, one
- * diagonal into the square's corner). Restyled entirely into our system —
- * bronze/gold circuit-trace color instead of white, dark #171310 base per
- * the original Taxonomy spec, EB Garamond + JetBrains Mono type.
- *
- * Geometry (percentages) is carried over directly from the reference —
- * it's proven layout math for how the elbows land exactly on each square's
- * corner — only the content, palette, and animation trigger changed
- * (viewport-triggered on scroll here, not a fixed hero timeline).
+ * Node/connector mechanic unchanged from the original Taxonomy build
+ * (three absolutely-positioned square nodes, each with a label group
+ * connected back by an elbowed SVG line) — only the layer names and copy
+ * changed, from brain regions to pipeline stages: the same three-beat
+ * logic (fast filter → trust → proof) now reads as a request pipeline
+ * instead of neuroscience, without touching the underlying geometry.
  *
  * Below md, the absolute diagram is replaced by a stacked list so the
- * content itself isn't lost on mobile — the reference hides its nodes
- * entirely below md because they're decorative; ours carry real copy, so
- * they get a fallback instead of disappearing.
+ * content itself isn't lost on mobile.
  */
 
 const NODES = [
   {
-    tag: '[ REPTILIAN ]',
-    fig: 'FIG. E — FOSSIL',
-    body: 'Speed & Survival. Bypasses cognitive drag within the 3-second biological window.',
+    tag: '[ FAST FILTER ]',
+    fig: 'FIG. E — SCREEN',
+    body: 'Survival-speed screening. If it doesn’t clear this layer in seconds, nothing downstream matters.',
     square: { top: '27%', left: '60%' },
     label: { top: '11%', left: '26%' },
     labelAnim: { x: -20 },
@@ -37,9 +31,9 @@ const NODES = [
     ],
   },
   {
-    tag: '[ LIMBIC ]',
-    fig: 'FIG. F — CHRYSALIS',
-    body: 'Somatic Markers. Engineers visceral trust and gut-level alignment before logic gets a vote.',
+    tag: '[ TRUST LAYER ]',
+    fig: 'FIG. F — SESSION',
+    body: 'Where a buyer decides you’re safe to listen to, before logic is ever consulted.',
     square: { top: '58%', left: '32%' },
     label: { top: '76%', left: '3%' },
     labelAnim: { x: -20 },
@@ -49,9 +43,9 @@ const NODES = [
     ],
   },
   {
-    tag: '[ CORTEX ]',
-    fig: 'FIG. G — LATTICE',
-    body: 'Post-Decision Logic. Supplies structural proof points and transparent data validation.',
+    tag: '[ LOGIC LAYER ]',
+    fig: 'FIG. G — VALIDATE',
+    body: 'Proof and structure for the buyer who needs to justify the decision afterward.',
     square: { top: '63%', left: '50%' },
     label: { top: '50%', left: '78%' },
     labelAnim: { x: 20 },
@@ -65,14 +59,7 @@ const NODES = [
 export default function Section4Taxonomy() {
   return (
     <section className="relative w-full bg-[#171310] text-[#f6f5f2] font-sans overflow-hidden px-6 md:px-12 pt-0 pb-28 md:pb-36">
-      {/* Light-to-dark bridge from Section 3's #f6f5f2 */}
-      <div
-        className="absolute top-0 left-0 right-0 h-[160px] md:h-[220px] pointer-events-none z-20"
-        style={{
-          background:
-            'linear-gradient(180deg, #f6f5f2 0%, #cfc9bd 30%, #3a2f24 62%, #171310 100%)',
-        }}
-      />
+      <SectionBreak label="SECTION_04 // DECISION_ENGINE" bg="#171310" tone="dark" />
 
       <div className="relative z-10 max-w-6xl mx-auto pt-20 md:pt-28 mb-10 md:mb-16">
         <motion.p
@@ -82,7 +69,7 @@ export default function Section4Taxonomy() {
           transition={{ duration: 0.6 }}
           className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#c9a878] mb-4"
         >
-          // SYSTEM TAXONOMY: THE DECISION PIPELINE
+          // THE DECISION ENGINE
         </motion.p>
         <motion.h2
           initial={{ opacity: 0, y: 16 }}
@@ -91,7 +78,7 @@ export default function Section4Taxonomy() {
           transition={{ duration: 0.7, delay: 0.05 }}
           className="font-garamond text-[clamp(32px,5.6vw,72px)] leading-[1.05]"
         >
-          The Triune Brain Framework.
+          Three layers. One pipeline.
         </motion.h2>
       </div>
 
@@ -178,10 +165,10 @@ export default function Section4Taxonomy() {
 
       <div className="relative z-10 max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-6 border-t border-[#f6f5f2]/15">
         <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#f6f5f2]/40">
-          // THE TRIUNE BRAIN, MAPPED.
+          // A DECISION, TRACED END TO END.
         </p>
         <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#f6f5f2]/40">
-          SYSTEM TAXONOMY · REV. 01.
+          DECISION ENGINE · REV. 01.
         </p>
       </div>
 

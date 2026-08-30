@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
  * alongside this file.
  */
 
-const LINKS = ['Work', 'Services', 'About', 'Insights'];
+const LINKS = ['Services', 'About', 'Insights'];
 
 export default function Header() {
   const [open, setOpen] = useState(false);

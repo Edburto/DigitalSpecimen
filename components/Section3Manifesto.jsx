@@ -2,9 +2,14 @@
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import SectionBreak from './SectionBreak';
 
 /**
- * Section 3 — Manifesto Plate (Curved Carousel v5)
+ * Section 3 — Services Plate (Curved Carousel v5)
+ *
+ * Card content updated to the three actual services (Decision Graph
+ * Audit / Signal Engineering / Pipeline Monitoring) — carousel mechanics
+ * below are unchanged from the original Manifesto build.
  *
  * THE ARC: cards curve along a real cosine arc (y = ARC_HEIGHT * (1 -
  * cos(norm * PI/2))) instead of a linear ramp — this is what actually reads
@@ -28,47 +33,36 @@ import { motion } from 'framer-motion';
 const UNIQUE_PODS = [
   {
     num: '01',
-    fig: 'FIG. A — DORSAL VIEW',
-    title: 'The Macro View',
-    body: 'Markets move one nervous system at a time. We look through a microscope to isolate actual behavior.',
-    meta1: 'MAGNIFICATION 40×',
-    meta2: 'SUBJECT: SINGLE NERVOUS SYSTEM',
+    fig: 'FIG. A — DIAGNOSTIC',
+    title: 'Decision Graph Audit',
+    body: 'We map every touchpoint a buyer passes through and flag exactly where the decision stalls or leaks.',
+    meta1: 'OUTPUT: FULL DECISION MAP',
+    meta2: 'METHOD: TRACE / MEASURE',
     accent: '#c9a878',
     accentDark: '#8a6a3d',
-    category: 'Structural Engineering',
+    category: 'Decision Graph Audit',
   },
   {
     num: '02',
-    fig: 'FIG. B — SECTIONAL DETAIL',
-    title: 'Structural Rigor',
-    body: 'Stripping noise and friction to optimize performance within the critical 3-second decision window.',
-    meta1: 'DECISION WINDOW 3.00 S',
-    meta2: 'METHOD: ISOLATE / EXAMINE',
+    fig: 'FIG. B — EXECUTION',
+    title: 'Signal Engineering',
+    body: 'We build the messaging, creative, and structure that move a buyer through each layer of the decision — fast, trusted, proven.',
+    meta1: 'LAYERS: FILTER / TRUST / LOGIC',
+    meta2: 'METHOD: BUILD / DEPLOY',
     accent: '#0f766e',
     accentDark: '#0b4f4a',
-    category: 'Neural Architecture',
+    category: 'Signal Engineering',
   },
   {
     num: '03',
-    fig: 'FIG. C — LOAD STUDY',
-    title: 'Form Meets Function',
-    body: 'Deeply textured systems engineered for maximum throughput velocity and complete zero drift.',
-    meta1: 'TOLERANCE: ZERO DRIFT',
-    meta2: 'OUTPUT: MAXIMUM THROUGHPUT',
+    fig: 'FIG. C — MAINTENANCE',
+    title: 'Pipeline Monitoring',
+    body: 'Ongoing measurement of the decision graph, so performance is tracked like uptime, not guessed at quarterly.',
+    meta1: 'CADENCE: CONTINUOUS',
+    meta2: 'METHOD: MONITOR / REPORT',
     accent: '#b3491f',
     accentDark: '#7a3015',
-    category: 'Demand Systems',
-  },
-  {
-    num: '04',
-    fig: 'FIG. D — FINAL MOUNT',
-    title: 'The Specimen Standard',
-    body: 'Nothing is left to chance. Polished to peak execution standards for absolute market dominance.',
-    meta1: 'STATUS: PEAK POLISH',
-    meta2: 'CHANCE: 0.00%',
-    accent: '#0891b2',
-    accentDark: '#055a6e',
-    category: 'Biomorphic UI',
+    category: 'Pipeline Monitoring',
   },
 ];
 
@@ -284,11 +278,8 @@ export default function Section3Manifesto() {
   }
 
   return (
-    <section className="relative w-full bg-[#f6f5f2] text-[#1a1a18] font-sans overflow-hidden px-6 md:px-12 pt-0 pb-32 md:pb-40">
-      <div
-        className="absolute top-0 left-0 right-0 h-[140px] md:h-[200px] pointer-events-none z-0"
-        style={{ background: 'linear-gradient(180deg, #030302 0%, #f6f5f2 100%)' }}
-      />
+    <section id="services" className="relative w-full bg-[#f6f5f2] text-[#1a1a18] font-sans overflow-hidden px-6 md:px-12 pt-0 pb-32 md:pb-40">
+      <SectionBreak label="SECTION_03 // SERVICES" bg="#f6f5f2" tone="light" />
 
       <div
         className="absolute inset-0 pointer-events-none"
@@ -308,7 +299,7 @@ export default function Section3Manifesto() {
           transition={{ duration: 0.6 }}
           className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#1a1a18]/60 mb-4"
         >
-          THE DIGITAL SPECIMEN MANIFESTO / SPECIMENS 01–04
+          WHAT WE DELIVER / SERVICES 01–03
         </motion.p>
 
         <motion.h2
@@ -318,7 +309,7 @@ export default function Section3Manifesto() {
           transition={{ duration: 0.7, delay: 0.05 }}
           className="font-garamond text-[clamp(36px,6.4vw,88px)] leading-[1.05] mb-4"
         >
-          A Study in Form and Function.
+          Three services. One system.
         </motion.h2>
 
         <motion.p
@@ -328,8 +319,8 @@ export default function Section3Manifesto() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="max-w-[62ch] text-sm md:text-base leading-relaxed text-[#1a1a18]/80"
         >
-          Every system we ship is treated the way a specimen is treated: dissected, diagrammed,
-          rebuilt from first principles — then mounted, labelled, and verified before it goes live.
+          Each engagement starts with the audit, builds the fix, then keeps it measured.
+          You can start at step one and stop there, or run all three as a single pipeline.
         </motion.p>
       </div>
 
@@ -439,10 +430,10 @@ export default function Section3Manifesto() {
 
       <div className="relative z-10 max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-16 md:mt-24 pt-6 border-t border-[#1a1a18]/20">
         <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#1a1a18]/50">
-          // DESIGNED FOR THE HUMAN NERVOUS SYSTEM.
+          // AUDIT FIRST. BUILD SECOND. MEASURE ALWAYS.
         </p>
         <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#1a1a18]/50">
-          SPECIMEN STANDARD · REV. 04.
+          SERVICE LADDER · REV. 01.
         </p>
       </div>
     </section>
