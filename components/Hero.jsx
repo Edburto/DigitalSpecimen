@@ -12,10 +12,13 @@ import { motion } from 'framer-motion';
  * matching the node-square motif already established in Section4's
  * Taxonomy diagram. No photography, so no crop-calibration risk.
  *
- * Cursor proximity lights up nearby nodes (same interaction idea as the
- * old insect zones, reimplemented against node coordinates instead of
- * photo crop offsets). A handful of connectors also carry a traveling
- * "packet" dot, standing in for a decision moving through the system.
+ * Cursor proximity lights up nearby nodes and pulls them slightly toward
+ * the pointer (same interaction idea as the old insect zones' translate +
+ * glow, reimplemented against node coordinates instead of photo crop
+ * offsets), plus a soft spotlight that tracks the cursor directly so the
+ * "light" reads even before it reaches a node. A handful of connectors
+ * also carry a traveling "packet" dot, standing in for a decision moving
+ * through the system.
  */
 
 const NODES = [
@@ -44,7 +47,7 @@ const PACKETS = [
   { path: ['n4', 'n6'], duration: 4.8, delay: 2.6 },
 ];
 
-const PROXIMITY_RADIUS = 0.22;
+const PROXIMITY_RADIUS = 0.3;
 
 function useNodeInteraction(stageRef) {
   const [state, setState] = useState({ px: 0.5, py: 0.5, active: false, tick: 0 });
@@ -90,7 +93,16 @@ function useNodeInteraction(stageRef) {
     [state]
   );
 
-  return { proximity, tick: state.tick };
+  const pull = useCallback(
+    (nodeId) => {
+      const n = NODE_BY_ID[nodeId];
+      const k = proximity(nodeId);
+      return { dx: (state.px - n.x) * k * 22, dy: (state.py - n.y) * k * 22 };
+    },
+    [state, proximity]
+  );
+
+  return { proximity, pull, tick: state.tick, px: state.px, py: state.py, active: state.active };
 }
 
 export default function Hero({
@@ -99,7 +111,7 @@ export default function Hero({
   ctaLabel = 'Audit Your Decision Graph',
 }) {
   const stageRef = useRef(null);
-  const { proximity, tick } = useNodeInteraction(stageRef);
+  const { proximity, pull, tick, px, py, active } = useNodeInteraction(stageRef);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -155,6 +167,7 @@ export default function Hero({
 
         {NODES.map((n, i) => {
           const k = proximity(n.id);
+          const { dx, dy } = pull(n.id);
           const idle = 0.5 + 0.5 * Math.sin((tick + i) * 0.9);
           const glow = Math.min(1, 0.12 + 0.55 * k + 0.08 * idle);
           return (
@@ -164,10 +177,11 @@ export default function Hero({
               style={{
                 left: `${n.x * 100}%`,
                 top: `${n.y * 100}%`,
-                transform: `translate(-50%, -50%) scale(${1 + k * 0.35})`,
+                transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${1 + k * 1.4})`,
                 borderColor: `rgba(94,234,212,${0.5 + glow * 0.5})`,
-                boxShadow: `0 0 ${8 + glow * 22}px ${1 + glow * 3}px rgba(94,234,212,${glow * 0.6})`,
-                transition: 'transform 0.4s cubic-bezier(.22,.61,.36,1)',
+                backgroundColor: `rgba(94,234,212,${k * 0.4})`,
+                boxShadow: `0 0 ${8 + glow * 48}px ${1 + glow * 7}px rgba(94,234,212,${glow * 0.85})`,
+                transition: 'transform 0.35s cubic-bezier(.22,.61,.36,1), background-color 0.35s ease',
               }}
             />
           );
@@ -217,6 +231,16 @@ export default function Hero({
           style={{
             background:
               'linear-gradient(180deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.05) 20%, rgba(0,0,0,0) 55%, rgba(2,10,6,.55) 100%)',
+          }}
+        />
+        {/* Cursor spotlight — the light itself, independent of any single node */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(420px circle at ${px * 100}% ${py * 100}%, rgba(94,234,212,0.22), transparent 62%)`,
+            opacity: active ? 1 : 0,
+            mixBlendMode: 'screen',
+            transition: 'opacity 0.4s ease',
           }}
         />
       </div>
