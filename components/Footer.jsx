@@ -29,6 +29,7 @@ export default function Footer() {
 
   return (
     <section
+      id="audit"
       ref={sectionRef}
       className="relative w-full h-screen overflow-hidden flex items-end justify-center bg-[#030302]"
     >

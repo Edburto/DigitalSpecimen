@@ -278,7 +278,7 @@ export default function Section3Manifesto() {
   }
 
   return (
-    <section className="relative w-full bg-[#f6f5f2] text-[#1a1a18] font-sans overflow-hidden px-6 md:px-12 pt-0 pb-32 md:pb-40">
+    <section id="services" className="relative w-full bg-[#f6f5f2] text-[#1a1a18] font-sans overflow-hidden px-6 md:px-12 pt-0 pb-32 md:pb-40">
       <SectionBreak label="SECTION_03 // SERVICES" bg="#f6f5f2" tone="light" />
 
       <div
