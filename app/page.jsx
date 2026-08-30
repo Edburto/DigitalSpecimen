@@ -1,7 +1,6 @@
 'use client';
 
 import Hero from '../components/Hero';
-import Section2SoilCutaway from '../components/Section2SoilCutaway';
 import Section3Manifesto from '../components/Section3Manifesto';
 import Section4Taxonomy from '../components/Section4Taxonomy';
 import Footer from '../components/Footer';
@@ -10,7 +9,6 @@ export default function Page() {
   return (
     <>
       <Hero />
-      <Section2SoilCutaway />
       <Section3Manifesto />
       <Section4Taxonomy />
       <Footer />
