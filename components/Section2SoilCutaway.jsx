@@ -45,7 +45,7 @@
  * (see /public/fonts — font binaries already supplied, no CDN needed).
  */
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 
 // --- Root path data -------------------------------------------------
@@ -104,6 +104,22 @@ export default function Section2SoilCutaway() {
   const containerRef = useRef(null);
   const prefersReducedMotion = useReducedMotion();
 
+  // Measure the REAL viewport height with JS instead of trusting the
+  // browser's own `svh` unit calculation. On at least one tested device,
+  // `100svh` was resolving to a value far smaller than the actual visible
+  // viewport (440px measured vs a much taller real window) — the cause is
+  // unconfirmed, but this sidesteps it entirely by using a value we know
+  // is correct: window.innerHeight, updated on resize.
+  const [vh, setVh] = useState(800); // SSR-safe fallback, corrected on mount
+  useEffect(() => {
+    function updateVh() {
+      setVh(window.innerHeight);
+    }
+    updateVh();
+    window.addEventListener('resize', updateVh);
+    return () => window.removeEventListener('resize', updateVh);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
@@ -159,9 +175,13 @@ export default function Section2SoilCutaway() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-[300svh] bg-[#030302] text-[#f6f5f2] overflow-hidden font-sans"
+      className="relative w-full bg-[#030302] text-[#f6f5f2] overflow-hidden font-sans"
+      style={{ height: vh * 3 }}
     >
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden flex flex-col justify-between p-6 md:p-12">
+      <div
+        className="sticky top-0 w-full overflow-hidden flex flex-col justify-between p-6 md:p-12"
+        style={{ height: vh }}
+      >
         {/* Fixed Chrome Header Labels */}
         <div className="absolute top-8 left-8 right-8 z-30 flex justify-between items-center text-[10px] uppercase font-mono tracking-[0.28em] text-white/70">
           <span>DEPTH // SUBSTRATUM</span>
