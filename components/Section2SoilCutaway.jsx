@@ -66,18 +66,13 @@ export default function Section2SoilCutaway() {
           </h2>
         </motion.div>
 
-        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-x-0 bottom-0 z-10 h-[56%] md:h-[62%] flex items-center justify-center pointer-events-none">
           <svg
             className="absolute inset-0 w-full h-full"
             viewBox="0 0 1600 900"
-            preserveAspectRatio="xMidYMid slice"
+            preserveAspectRatio="xMidYMid meet"
           >
             <defs>
-              <linearGradient id="pipeGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#5eead4" />
-                <stop offset="55%" stopColor="#c9a878" />
-                <stop offset="100%" stopColor="#5eead4" />
-              </linearGradient>
               <filter id="pipeGlow" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur stdDeviation="3" result="blur" />
                 <feMerge>
@@ -92,7 +87,7 @@ export default function Section2SoilCutaway() {
               <motion.path
                 d={`M${NODE_XS[0]} ${PIPELINE_Y} L${NODE_XS[1]} ${PIPELINE_Y}`}
                 fill="none"
-                stroke="url(#pipeGradient)"
+                stroke="#5eead4"
                 strokeWidth="2"
                 strokeLinecap="round"
                 initial={{ pathLength: 0 }}
@@ -103,7 +98,7 @@ export default function Section2SoilCutaway() {
               <motion.path
                 d={`M${NODE_XS[1]} ${PIPELINE_Y} L${NODE_XS[2]} ${PIPELINE_Y}`}
                 fill="none"
-                stroke="url(#pipeGradient)"
+                stroke="#5eead4"
                 strokeWidth="2"
                 strokeLinecap="round"
                 initial={{ pathLength: 0 }}
@@ -130,7 +125,7 @@ export default function Section2SoilCutaway() {
               <motion.path
                 d={`M${NODE_XS[3]} ${PIPELINE_Y} L${NODE_XS[4]} ${PIPELINE_Y}`}
                 fill="none"
-                stroke="url(#pipeGradient)"
+                stroke="#5eead4"
                 strokeWidth="2"
                 strokeLinecap="round"
                 initial={{ pathLength: 0 }}
@@ -141,7 +136,7 @@ export default function Section2SoilCutaway() {
               <motion.path
                 d={`M${NODE_XS[4]} ${PIPELINE_Y} L${NODE_XS[5]} ${PIPELINE_Y}`}
                 fill="none"
-                stroke="url(#pipeGradient)"
+                stroke="#5eead4"
                 strokeWidth="2"
                 strokeLinecap="round"
                 initial={{ pathLength: 0 }}
