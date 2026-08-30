@@ -286,7 +286,7 @@ export default function Section3Manifesto() {
   return (
     <section className="relative w-full bg-[#f6f5f2] text-[#1a1a18] font-sans overflow-hidden px-6 md:px-12 pt-0 pb-32 md:pb-40">
       <div
-        className="absolute top-0 left-0 right-0 h-[140px] md:h-[200px] pointer-events-none z-20"
+        className="absolute top-0 left-0 right-0 h-[140px] md:h-[200px] pointer-events-none z-0"
         style={{ background: 'linear-gradient(180deg, #030302 0%, #f6f5f2 100%)' }}
       />
 
